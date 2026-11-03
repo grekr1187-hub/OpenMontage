@@ -19,12 +19,13 @@ python -m integrations.mcp_server.server
 
 ## Remote Streamable HTTP mode
 
-1. Check out the branch/repository on an Ubuntu or Debian server at `/opt/OpenMontage`.
-2. Run `sudo bash deploy/install-mcp.sh`. It installs Python dependencies, generates a bearer token in `/etc/openmontage/mcp.env` if one does not exist, and installs/starts the systemd service.
-3. Configure a domain and TLS certificate, then adapt `deploy/nginx-openmontage-mcp.conf.example` for that domain and certificate.
-4. Keep the Python listener bound to `127.0.0.1:8000`; expose only HTTPS via the reverse proxy. Do not open port 8000 publicly.
-5. Verify that requests without `Authorization: Bearer <token>` return HTTP 401 and that authenticated MCP requests reach the server.
-6. Configure the HTTPS MCP URL (typically `https://YOUR_DOMAIN/mcp`) in ChatGPT if the account/workspace supports custom MCP connectors and its authentication options are compatible with this bearer-token gate.
+1. Deploy the repository to a dedicated Linux service account.
+2. Create a virtual environment and install `requirements.txt`.
+3. Generate a token, for example `openssl rand -hex 32`, and place it in a root-readable environment file based on `deploy/mcp.env.example`.
+4. Configure the service from `deploy/openmontage-mcp.service.example` and the TLS reverse proxy from `deploy/nginx-openmontage-mcp.conf.example`.
+5. Keep the Python listener bound to `127.0.0.1:8000`; expose only HTTPS via the reverse proxy. Do not open port 8000 publicly.
+6. Start the systemd service and verify the endpoint through HTTPS. Requests without `Authorization: Bearer <token>` must return HTTP 401.
+7. Add the HTTPS MCP URL (typically `https://YOUR_DOMAIN/mcp`) to ChatGPT's connector settings if the workspace plan supports custom MCP connectors and the chosen authentication method.
 
 Environment variables:
 
